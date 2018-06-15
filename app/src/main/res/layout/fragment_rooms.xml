@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/pub3x3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="53dp"
+        android:text="3x3" />
+
+    <Button
+        android:id="@+id/my3x3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/pub3x3"
+        android:layout_marginTop="96dp"
+        android:text="3x3" />
+
+    <TextView
+        android:id="@+id/mySesh"
+        android:layout_width="313dp"
+        android:layout_height="31dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="34dp"
+        android:text="My Sessions yoooooooo" />
+
+    <TextView
+        android:id="@+id/pubSesh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/mySesh"
+        android:layout_marginTop="186dp"
+        android:text="Public Rooms" />
+</RelativeLayout>
