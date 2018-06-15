@@ -1,4 +1,4 @@
-package client;
+package org.timepedia.exporter.client;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
