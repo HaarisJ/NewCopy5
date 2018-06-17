@@ -52,14 +52,14 @@ public class SignInActivity extends AppCompatActivity {
         //String playerName = currentUser.getDisplayName();
         TextView dispname = findViewById(R.id.txt_dispname);
         EditText chosenUsername = findViewById(R.id.txt_username);
-//
-//
-//        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                .setDisplayName("Paradox")
+        signInSilently();
+
+//  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//               .setDisplayName("Paradox")
 ////              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
 //                .build();
 //
-//        currentUser.updateProfile(profileUpdates)
+//          currentUser.updateProfile(profileUpdates)
 //                .addOnCompleteListener(new OnCompleteListener<Void>() {
 //                    @Override
 //                    public void onComplete(@NonNull Task<Void> task) {
@@ -68,9 +68,9 @@ public class SignInActivity extends AppCompatActivity {
 //                        }
 //                    }
 //                });
-//
-//        dispname.setText(currentUser.getDisplayName()); //display player name
-//
+
+          //dispname.setText(chosenUsername); //display player name
+
 
 
         //updateUI(currentUser);
@@ -115,7 +115,7 @@ public class SignInActivity extends AppCompatActivity {
                             GoogleSignInAccount signedInAccount = task.getResult();
                             firebaseAuthWithPlayGames(signedInAccount);
                         } else {
-                            startSignInIntent();
+                            //startSignInIntent();
                             // Player will need to sign-in explicitly using via UI
                         }
                     }
