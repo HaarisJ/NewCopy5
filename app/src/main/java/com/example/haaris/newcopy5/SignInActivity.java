@@ -59,17 +59,17 @@ public class SignInActivity extends AppCompatActivity {
 //              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                 .build();
 
-          currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "User profile updated.");
-                        }
-                    }
-                });
+//          currentUser.updateProfile(profileUpdates)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if (task.isSuccessful()) {
+//                            Log.d("TAG", "User profile updated.");
+//                        }
+//                    }
+//                });
 
-          dispname.setText(currentUser.getDisplayName()); //display player name
+         // dispname.setText(currentUser.getDisplayName()); //display player name
 
 
 

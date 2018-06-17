@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
             bottomNav.setSelectedItemId(R.id.navigation_rooms);
             bottomNav.setOnNavigationItemSelectedListener(navListener);
+
         }
         else{
             bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.GONE);
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
             bottomNav.setSelectedItemId(R.id.navigation_chat);
             bottomNav.setOnNavigationItemSelectedListener(navListener);
+
         }
 
     }
@@ -92,26 +94,10 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setVisibility(View.VISIBLE);
     }
 
-    public void hideRoomsNav(){
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.GONE);
-    }
-
-    public void showRoomsNav(){
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.VISIBLE);
-    }
-
     public void hideChatNav(){
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.GONE);
     }
-
-    public void showChatNav(){
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.VISIBLE);
-    }
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

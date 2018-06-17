@@ -46,6 +46,8 @@ public class TimerFragment extends Fragment {
     ConstraintLayout mLayout;
     String col;
     TextView ScrambleTextView;
+    TimerFragment ldf = new TimerFragment();
+    Bundle avgs = new Bundle();
 
     long[] recent5= new long[] {0,0,0,0,0};
     long[] recent12= new long[] {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -140,6 +142,10 @@ public class TimerFragment extends Fragment {
                 sum = sum-max-min;
                 avg5 = sum/3;
                 ao5.setText("Ao5: "+avg5/1000+"."+(avg5/10)%100);
+
+                avgs.putString("AO5", ""+ao5.getText());
+                ldf.setArguments(avgs);
+                getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
             }
         }
     };
