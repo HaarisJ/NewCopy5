@@ -54,22 +54,22 @@ public class SignInActivity extends AppCompatActivity {
         EditText chosenUsername = findViewById(R.id.txt_username);
         signInSilently();
 
-//  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//               .setDisplayName("Paradox")
-////              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-//                .build();
-//
-//          currentUser.updateProfile(profileUpdates)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//                            Log.d("TAG", "User profile updated.");
-//                        }
-//                    }
-//                });
+  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+               .setDisplayName("Paradox")
+//              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                .build();
 
-          //dispname.setText(chosenUsername); //display player name
+          currentUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "User profile updated.");
+                        }
+                    }
+                });
+
+          dispname.setText(currentUser.getDisplayName()); //display player name
 
 
 
@@ -83,25 +83,25 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     //Manual Sign In
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                // The signed in account is stored in the result.
-                GoogleSignInAccount signedInAccount = result.getSignInAccount();
-                firebaseAuthWithPlayGames(signedInAccount);
-            } else {
-                String message = result.getStatus().getStatusMessage();
-                if (message == null || message.isEmpty()) {
-                    message = getString(R.string.signin_other_error);
-                }
-                new AlertDialog.Builder(this).setMessage(message)
-                        .setNeutralButton(android.R.string.ok, null).show();
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == RC_SIGN_IN) {
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            if (result.isSuccess()) {
+//                // The signed in account is stored in the result.
+//                GoogleSignInAccount signedInAccount = result.getSignInAccount();
+//                firebaseAuthWithPlayGames(signedInAccount);
+//            } else {
+//                String message = result.getStatus().getStatusMessage();
+//                if (message == null || message.isEmpty()) {
+//                    message = getString(R.string.signin_other_error);
+//                }
+//                new AlertDialog.Builder(this).setMessage(message)
+//                        .setNeutralButton(android.R.string.ok, null).show();
+//            }
+//        }
+//    }
 
     private void signInSilently() {
         GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
@@ -122,12 +122,12 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
     // Start manual sign-in when silent fails
-    private void startSignInIntent() {
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
-                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-        Intent intent = signInClient.getSignInIntent();
-        startActivityForResult(intent, RC_SIGN_IN);
-    }
+//    private void startSignInIntent() {
+//        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
+//                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+//        Intent intent = signInClient.getSignInIntent();
+//        startActivityForResult(intent, RC_SIGN_IN);
+//    }
 
 
     // Call this both in the silent sign-in task's OnCompleteListener and in the
