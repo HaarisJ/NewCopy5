@@ -1,6 +1,7 @@
 package com.example.haaris.newcopy5;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -57,7 +58,7 @@ public class TimerFragment extends Fragment {
     long sum;
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
-    String scrambleType = "squan";
+    String scrambleType = "777";
     /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -213,10 +214,12 @@ public class TimerFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_timer, null);
 
-        String scramble = solveCube(scrambleType);
         ScrambleTextView = (TextView) v.findViewById(R.id.scrambleTextView);
         ScrambleTextView.setVisibility(View.VISIBLE);
-        ScrambleTextView.setText(""+scramble+"");
+        ScrambleTextView.setText("Generating scramble...");
+        //ScrambleTextView.setText(""+scramble+"");
+        cubeSolver scramble = new cubeSolver();
+        scramble.execute(scrambleType);
 
         startBtn = (Button) v.findViewById(R.id.startBtn);
         startBtn.setVisibility(View.VISIBLE);
@@ -314,8 +317,11 @@ public class TimerFragment extends Fragment {
                     startBtn.setVisibility(View.VISIBLE);
                     mLayout.setBackgroundColor(Color.WHITE);
 
-                    String scramble = solveCube(scrambleType);
-                    ScrambleTextView.setText(""+scramble+"");
+                    ScrambleTextView.setText("Generating scramble...");
+                    cubeSolver scramble = new cubeSolver();
+                    scramble.execute(scrambleType);
+                    //String scramble = cubeSolver(scrambleType);
+                    //ScrambleTextView.setText(""+scramble+"");
                 }
                 return false;
             }
@@ -325,53 +331,64 @@ public class TimerFragment extends Fragment {
 
     }
 
-    private String solveCube(String scrambleType) {
-        Random k = new Random();
-        PuzzleStateAndGenerator solver;
-        switch (scrambleType) {
-            case "333": ThreeByThreeCubePuzzle cubeState = new ThreeByThreeCubePuzzle();
-                solver = cubeState.generateRandomMoves(k);
-                break;
-            case "444": FourByFourCubePuzzle cubeState4 = new FourByFourCubePuzzle();
-                solver = cubeState4.generateRandomMoves(k);
-                break;
-            case "222": TwoByTwoCubePuzzle cubeState2 = new TwoByTwoCubePuzzle();
-                solver = cubeState2.generateRandomMoves(k);
-                break;
-            case "pyra": PyraminxPuzzle cubeStateP = new PyraminxPuzzle();
-                solver = cubeStateP.generateRandomMoves(k);
-                break;
-            case "squan": SquareOnePuzzle cubeStateS1 = new SquareOnePuzzle();
-                solver = cubeStateS1.generateRandomMoves(k);
-                break;
-            case "skewb": SkewbPuzzle cubeStateSk = new SkewbPuzzle();
-                solver = cubeStateSk.generateRandomMoves(k);
-                break;
-            case "mega": MegaminxPuzzle cubeStateM = new MegaminxPuzzle();
-                solver = cubeStateM.generateRandomMoves(k);
-                break;
-            case "clock": ClockPuzzle cubeStateC = new ClockPuzzle();
-                solver = cubeStateC.generateRandomMoves(k);
-                break;
-            case "555": CubePuzzle cubeState5 = new CubePuzzle(5);
-                solver = cubeState5.generateRandomMoves(k);
-                break;
-            case "666": CubePuzzle cubeState6 = new CubePuzzle(6);
-                solver = cubeState6.generateRandomMoves(k);
-                break;
-            case "777": CubePuzzle cubeState7 = new CubePuzzle(7);
-                solver = cubeState7.generateRandomMoves(k);
-                break;
-            default:
-                solver = null;
-                break;
+    private class cubeSolver extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... scrambles) {
+            String scrambleType = scrambles[0];
+            Random k = new Random();
+            PuzzleStateAndGenerator solver;
+            publishProgress("cheese");
+            switch (scrambleType) {
+                case "333": ThreeByThreeCubePuzzle cubeState = new ThreeByThreeCubePuzzle();
+                    solver = cubeState.generateRandomMoves(k);
+                    break;
+                case "444": FourByFourCubePuzzle cubeState4 = new FourByFourCubePuzzle();
+                    solver = cubeState4.generateRandomMoves(k);
+                    break;
+                case "222": TwoByTwoCubePuzzle cubeState2 = new TwoByTwoCubePuzzle();
+                    solver = cubeState2.generateRandomMoves(k);
+                    break;
+                case "pyra": PyraminxPuzzle cubeStateP = new PyraminxPuzzle();
+                    solver = cubeStateP.generateRandomMoves(k);
+                    break;
+                case "squan": SquareOnePuzzle cubeStateS1 = new SquareOnePuzzle();
+                    solver = cubeStateS1.generateRandomMoves(k);
+                    break;
+                case "skewb": SkewbPuzzle cubeStateSk = new SkewbPuzzle();
+                    solver = cubeStateSk.generateRandomMoves(k);
+                    break;
+                case "mega": MegaminxPuzzle cubeStateM = new MegaminxPuzzle();
+                    solver = cubeStateM.generateRandomMoves(k);
+                    break;
+                case "clock": ClockPuzzle cubeStateC = new ClockPuzzle();
+                    solver = cubeStateC.generateRandomMoves(k);
+                    break;
+                case "555": CubePuzzle cubeState5 = new CubePuzzle(5);
+                    solver = cubeState5.generateRandomMoves(k);
+                    break;
+                case "666": CubePuzzle cubeState6 = new CubePuzzle(6);
+                    solver = cubeState6.generateRandomMoves(k);
+                    break;
+                case "777": CubePuzzle cubeState7 = new CubePuzzle(7);
+                    solver = cubeState7.generateRandomMoves(k);
+                    break;
+                default:
+                    solver = null;
+                    break;
+            }
+
+            String finalResult = solver.generator;
+            return finalResult;
+
         }
 
-        String finalResult = solver.generator;
-        return finalResult;
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        @Override
+        protected void onPostExecute(String finalResult) {
+            super.onPostExecute(finalResult);
+            ScrambleTextView.setText(""+finalResult+"");
+        }
     }
-
    /* @Override
     public void onPause() {
         super.onPause();
