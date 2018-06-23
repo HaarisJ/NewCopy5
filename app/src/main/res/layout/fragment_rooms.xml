@@ -3,20 +3,11 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/pub3x3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="53dp"
-        android:text="3x3" />
-
-    <Button
         android:id="@+id/my3x3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/pub3x3"
+        android:layout_alignStart="@+id/pubSesh"
         android:layout_marginTop="96dp"
         android:text="3x3" />
 
@@ -38,5 +29,19 @@
         android:layout_alignStart="@+id/mySesh"
         android:layout_marginTop="186dp"
         android:text="Public Rooms" />
+
+    <GridView
+        android:id="@+id/pubRoomsGrid"
+        android:layout_width="match_parent"
+        android:layout_height="193dp"
+        android:layout_below="@+id/pubSesh"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:rowHeight="250dp"
+        android:columnWidth="100dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth" />
+
 
 </RelativeLayout>

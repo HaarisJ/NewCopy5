@@ -1,6 +1,7 @@
 package com.example.haaris.newcopy5;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +9,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 
 public class RoomsFragment extends Fragment {
-    Button pub3x3;
     Button my3x3;
     String PUBROOMS = "NONE";
+    GridView publicGridView;
+
+    String sessions[] = {"Create Room", "2", "3", "4", "5"};
+
+    int sessionIcons[] = {R.drawable.ic_add_box_black_200dp, R.drawable.temp_cube, R.drawable.temp_cube, R.drawable.temp_cube, R.drawable.temp_cube};
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
@@ -22,24 +29,15 @@ public class RoomsFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_rooms, null);
 
-        pub3x3 = (Button) v.findViewById(R.id.pub3x3);
-        pub3x3.setVisibility(View.VISIBLE);
-        pub3x3.setBackgroundColor(Color.GRAY);
         my3x3 = (Button) v.findViewById(R.id.my3x3);
         my3x3.setVisibility(View.VISIBLE);
         my3x3.setBackgroundColor(Color.GRAY);
 
-        pub3x3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        publicGridView = v.findViewById(R.id.pubRoomsGrid);
+        PublicGridAdapter adapter = new PublicGridAdapter(v.getContext(), sessionIcons, sessions);
+        publicGridView.setAdapter(adapter);
 
-                ((MainActivity)getActivity()).publicRoomJoined();
-                if(PUBROOMS.equals("WE GOT ONE") ){
-                    my3x3.setBackgroundColor(Color.GRAY);// set all pubroom buttons to gray
-                }
 
-            } //end onTouch
-        });
         my3x3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//private session
@@ -51,6 +49,23 @@ public class RoomsFragment extends Fragment {
             }
         });
 
+        publicGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (i==0){
+                    Intent myIntent = new Intent(view.getContext(), CreatePublicRoomActivity.class);
+                    view.getContext().startActivity(myIntent);
+                }
+
+                else {
+                    ((MainActivity)getActivity()).publicRoomJoined();
+                    if(PUBROOMS.equals("WE GOT ONE") ){
+                        my3x3.setBackgroundColor(Color.GRAY);// set all pubroom buttons to gray
+                    }
+                }
+            }
+        });
         return v;
     }
 }

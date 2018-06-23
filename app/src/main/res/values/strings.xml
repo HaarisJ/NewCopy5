@@ -11,4 +11,17 @@
     <string name="title_rooms">Rooms</string>
     <string name="app_name">CubeSync</string>
     <string name="signin_other_error">Sign In Failed</string>
+    <string-array name="puzzle_types">
+        <item>2x2</item>
+        <item>3x3</item>
+        <item>4x4</item>
+        <item>5x5</item>
+        <item>6x6</item>
+        <item>7x7</item>
+        <item>Megaminx</item>
+        <item>Square One</item>
+        <item>Pyramimnx</item>
+        <item>Skewb</item>
+        <item>Clock</item>
+    </string-array>
 </resources>

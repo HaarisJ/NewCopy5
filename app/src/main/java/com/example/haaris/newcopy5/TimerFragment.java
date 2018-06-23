@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class TimerFragment extends Fragment {
     long sum;
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
-    String scrambleType = "777";
+    String scrambleType = "444";
     /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -91,7 +92,7 @@ public class TimerFragment extends Fragment {
             }
             else{
                 result.setText("" + mins + ":" + String.format("%02d", secs) + "." +
-                        String.format("%02d", ms));
+                            String.format("%02d", ms));
             }
             customHandler.postDelayed(this,0);
         }
@@ -196,6 +197,7 @@ public class TimerFragment extends Fragment {
             ((MainActivity)getActivity()).showNav();
         }
     };
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
