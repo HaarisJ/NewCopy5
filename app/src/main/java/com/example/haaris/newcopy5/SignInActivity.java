@@ -52,12 +52,12 @@ public class SignInActivity extends AppCompatActivity {
         //String playerName = currentUser.getDisplayName();
         TextView dispname = findViewById(R.id.txt_dispname);
         EditText chosenUsername = findViewById(R.id.txt_username);
-        signInSilently();
+//        signInSilently();
 
-  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-               .setDisplayName("Paradox")
+  //UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+    //           .setDisplayName("Paradox")
 //              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                .build();
+      //          .build();
 
 //          currentUser.updateProfile(profileUpdates)
 //                .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -83,25 +83,25 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     //Manual Sign In
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == RC_SIGN_IN) {
-//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-//            if (result.isSuccess()) {
-//                // The signed in account is stored in the result.
-//                GoogleSignInAccount signedInAccount = result.getSignInAccount();
-//                firebaseAuthWithPlayGames(signedInAccount);
-//            } else {
-//                String message = result.getStatus().getStatusMessage();
-//                if (message == null || message.isEmpty()) {
-//                    message = getString(R.string.signin_other_error);
-//                }
-//                new AlertDialog.Builder(this).setMessage(message)
-//                        .setNeutralButton(android.R.string.ok, null).show();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // The signed in account is stored in the result.
+                GoogleSignInAccount signedInAccount = result.getSignInAccount();
+                firebaseAuthWithPlayGames(signedInAccount);
+            } else {
+                String message = result.getStatus().getStatusMessage();
+                if (message == null || message.isEmpty()) {
+                    message = getString(R.string.signin_other_error);
+                }
+                new AlertDialog.Builder(this).setMessage(message)
+                        .setNeutralButton(android.R.string.ok, null).show();
+            }
+        }
+    }
 
     private void signInSilently() {
         GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
@@ -115,19 +115,19 @@ public class SignInActivity extends AppCompatActivity {
                             GoogleSignInAccount signedInAccount = task.getResult();
                             firebaseAuthWithPlayGames(signedInAccount);
                         } else {
-                            //startSignInIntent();
+                            startSignInIntent();
                             // Player will need to sign-in explicitly using via UI
                         }
                     }
                 });
     }
     // Start manual sign-in when silent fails
-//    private void startSignInIntent() {
-//        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
-//                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-//        Intent intent = signInClient.getSignInIntent();
-//        startActivityForResult(intent, RC_SIGN_IN);
-//    }
+    private void startSignInIntent() {
+        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
+                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+        Intent intent = signInClient.getSignInIntent();
+        startActivityForResult(intent, RC_SIGN_IN);
+    }
 
 
     // Call this both in the silent sign-in task's OnCompleteListener and in the

@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.View;
 
-//import com.example.haaris.newcopy5.R;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -21,11 +20,18 @@ public class MainActivity extends AppCompatActivity {
     Fragment MoreFragment = new MoreFragment();
     Fragment ChatFragment = new ChatFragment();
     Fragment RoomsFragment = new RoomsFragment();
+    DatabaseHelper mDatabaseHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDatabaseHelper = new DatabaseHelper(this);
+
+
+
         hideChatNav();
         this.getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -51,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
 
         bottomNav.setSelectedItemId(R.id.navigation_rooms);
+    }
+
+    public void AddData(String newEntry) {
+        boolean insertData = mDatabaseHelper.addData(newEntry);
+
+        if (insertData) {
+            System.out.println("it worked!!");
+        } else {
+            System.out.println("it DID NOT WORRRK worked!!");
+        }
     }
 
     public void privateRoomJoined(){//called in the rooms frag.
@@ -81,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
             bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         }
+
+    }
+
+    public void refreshStats(){
+        Fragment StatsFragment = new StatsFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, StatsFragment).commit();
+        getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
 
     }
 

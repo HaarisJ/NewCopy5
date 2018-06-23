@@ -16,8 +16,11 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import net.gnehzr.tnoodle.scrambles.PuzzleStateAndGenerator;
 
@@ -38,6 +41,9 @@ import static android.content.ContentValues.TAG;
 
 public class TimerFragment extends Fragment {
     Button startBtn,stopBtn, ao5Btn,ao12Btn;
+
+    private static final String TAG = "MainActivity";
+
     TextView result,ao5,ao12;
     Handler customHandler = new Handler();
     ListView timeList;
@@ -46,8 +52,9 @@ public class TimerFragment extends Fragment {
     ConstraintLayout mLayout;
     String col;
     TextView ScrambleTextView;
-    TimerFragment ldf = new TimerFragment();
+    Fragment ldf = new Fragment ();
     Bundle avgs = new Bundle();
+
 
     long[] recent5= new long[] {0,0,0,0,0};
     long[] recent12= new long[] {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -74,6 +81,8 @@ public class TimerFragment extends Fragment {
         }
     }
 */
+
+
 
 
     Runnable updateTimerThread = new Runnable(){
@@ -143,7 +152,7 @@ public class TimerFragment extends Fragment {
                 avg5 = sum/3;
                 ao5.setText("Ao5: "+avg5/1000+"."+(avg5/10)%100);
 
-                avgs.putString("AO5", ""+ao5.getText());
+                avgs.putString("ao5", ""+ao5);
                 ldf.setArguments(avgs);
                 getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
             }
@@ -206,6 +215,8 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
 
         if(savedInstanceState != null) {
             Log.i(TAG, "got notnull ");
@@ -305,6 +316,8 @@ public class TimerFragment extends Fragment {
                     customHandler.removeCallbacks(holdTask);
                     customHandler.postDelayed(screenShow, 0);
 
+                    ((MainActivity)getActivity()).AddData(""+result.getText());
+                    ((MainActivity)getActivity()).refreshStats();
                     solveNum++;
                     if (solveNum < 10) {
                         strArr.add(0, "  " + solveNum + ". " + result.getText().toString());
@@ -395,6 +408,8 @@ public class TimerFragment extends Fragment {
             ScrambleTextView.setText(""+finalResult+"");
         }
     }
+
+
    /* @Override
     public void onPause() {
         super.onPause();
