@@ -111,10 +111,6 @@ public class SignInActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                final Handler handler = new Handler(); handler.postDelayed(new Runnable() {
-                    @Override public void run() { //Do something after 100ms
-                    } }, 100);
-
 
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
@@ -133,11 +129,6 @@ public class SignInActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        final Handler handler = new Handler(); handler.postDelayed(new Runnable() {
-                            @Override public void run() { //Do something after 100ms
-                                } }, 100);
-
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
