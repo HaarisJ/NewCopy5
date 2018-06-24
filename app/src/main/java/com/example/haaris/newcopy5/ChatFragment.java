@@ -8,9 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ChatFragment extends Fragment {
     Button leaveRoomBtn;
+    TextView usernameTxt;
 
     @Nullable
     @Override
@@ -32,7 +37,12 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        //usernameTxt.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         return v;
 
+
+
+
     }
+
 }

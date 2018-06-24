@@ -12,17 +12,18 @@
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/txt_username"
+        android:id="@+id/usernameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="100dp"
         android:ems="10"
         android:hint="Choose a username"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="207dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt_note"
@@ -34,7 +35,7 @@
         android:text="Note: This cannot be changed."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_username" />
+        app:layout_constraintTop_toBottomOf="@+id/usernameTxt" />
 
     <TextView
         android:id="@+id/txt_dispname"
