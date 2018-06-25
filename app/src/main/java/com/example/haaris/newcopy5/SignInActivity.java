@@ -45,11 +45,37 @@ public class SignInActivity extends AppCompatActivity {
     TextView mdispname;
     GoogleSignInClient mGoogleSignInClient;
     SignInButton button;
+    String username;
 
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName("Paradox")
+//              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                .build();
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        currentUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "User profile updated.");
+                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        mdispname.setText(currentUser.getDisplayName()); //display player name
+
+        username = currentUser.getDisplayName();
+
+
+
 
     }
 
@@ -58,6 +84,8 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+
 
         button = findViewById(R.id.sign_in_button);
         mAuth = FirebaseAuth.getInstance();
@@ -74,7 +102,11 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() != null ){
-                    startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+
+
 
                 }
             }
