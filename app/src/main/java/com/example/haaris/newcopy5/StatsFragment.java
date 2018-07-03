@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class StatsFragment extends Fragment {
     TextView currAO5;
@@ -51,15 +52,24 @@ public class StatsFragment extends Fragment {
         //get the data and append to a list
         Cursor data = mDatabaseHelper.getData();
         ArrayList<String> listData = new ArrayList<>();
+        int count= 1;
         while(data.moveToNext()){
             //get the value from the database in column 1
             //then add it to the ArrayList
-            listData.add(data.getString(1));
+            listData.add(""+count+". "+ data.getString(1));
+            count++;
+
         }
+
+        ArrayList<String> revListData = new ArrayList<String>(listData);
+        Collections.reverse(revListData);
+
         //create the list adapter and set the adapter
         ListAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
-                android.R.layout.simple_list_item_1, listData);
+                android.R.layout.simple_list_item_1, revListData);
         mListView.setAdapter(adapter);
+
+
 
         //set an onItemClickListener to the ListView
 //        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

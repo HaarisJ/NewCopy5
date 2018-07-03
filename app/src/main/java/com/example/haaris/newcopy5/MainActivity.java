@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -100,13 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void refreshStats(){
-        Fragment StatsFragment = new StatsFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, StatsFragment).commit();
-        getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
-
-    }
-
     public void hideNav() {
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.setVisibility(View.GONE);
@@ -138,15 +132,16 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
 
+
                         selectedFragment = TimerFragment;
 
                     } else if (i == R.id.navigation_stats) {
                         getSupportFragmentManager().beginTransaction().hide(TimerFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
-
+                        getSupportFragmentManager().beginTransaction().detach(StatsFragment).commit();
+                        getSupportFragmentManager().beginTransaction().attach(StatsFragment).commit();
                         selectedFragment = StatsFragment;
 
                     } else if (i == R.id.navigation_more) {
