@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,39 +43,19 @@ public class SignInActivity extends AppCompatActivity {
     private final static int RC_SIGN_IN = 4;
     private FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
-    TextView mdispname;
     GoogleSignInClient mGoogleSignInClient;
-    SignInButton button;
+    SignInButton signInBtn;
     String username;
+
 
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName("Paradox")
-//              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                .build();
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "User profile updated.");
-                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-        mdispname.setText(currentUser.getDisplayName()); //display player name
-
         username = currentUser.getDisplayName();
-
-
+        username = null; //FOR TESTING PURPOSES -- REMOVE LATER
+        setUsername();
 
 
     }
@@ -87,11 +68,11 @@ public class SignInActivity extends AppCompatActivity {
 
 
 
-        button = findViewById(R.id.sign_in_button);
-        mAuth = FirebaseAuth.getInstance();
-        mdispname = findViewById(R.id.txt_dispname);
+        signInBtn = findViewById(R.id.sign_in_button);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        mAuth = FirebaseAuth.getInstance();
+
+        signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
@@ -104,7 +85,10 @@ public class SignInActivity extends AppCompatActivity {
                 if (mAuth.getCurrentUser() != null ){
                     Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                     intent.putExtra("username", username);
-                    startActivity(intent);
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (username != null){
+                        startActivity(intent);
+                    }
 
 
 
@@ -166,7 +150,7 @@ public class SignInActivity extends AppCompatActivity {
                             Log.d("TAG", "signInWithCredential:success");
                             Toast.makeText(SignInActivity.this, "Google Sign In Success", Toast.LENGTH_LONG).show();
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
 
                         } else {
 
@@ -181,6 +165,54 @@ public class SignInActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    private void setUsername() { //Username is set with Firebase
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (username == null){
+
+            chooseUsername();
+
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                    .build();
+
+            currentUser.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("TAG", "Username Updated");
+                                Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+        }
+//        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+//        intent.putExtra("username", username);
+//        startActivity(intent);
+
+    }
+
+    private void chooseUsername() { //User selects a username
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose a username");
+
+        final EditText inputField = new EditText(this);
+
+        builder.setView(inputField);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                username = inputField.getText().toString();
+            }
+        });
+
+
+        builder.show();
+
     }
 
 
