@@ -343,6 +343,8 @@ public class TimerFragment extends Fragment {
 
     }
 
+
+
     private class cubeSolver extends AsyncTask<String, String, String>{
 
         @Override

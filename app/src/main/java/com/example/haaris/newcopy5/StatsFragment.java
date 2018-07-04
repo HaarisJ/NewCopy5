@@ -17,8 +17,14 @@ import android.widget.TextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class StatsFragment extends Fragment {
     TextView currAO5;
@@ -26,6 +32,9 @@ public class StatsFragment extends Fragment {
 
     DatabaseHelper mDatabaseHelper;
     private ListView mListView;
+
+    private DatabaseReference databaseReference;
+
 
     private static final String TAG = "ListDataActivity";
 
@@ -37,39 +46,71 @@ public class StatsFragment extends Fragment {
 
 
         mListView = (ListView) v.findViewById(R.id.listView);
-        Log.i(TAG,"got just before populate list");
+//        Log.i(TAG,"got just before populate list");
 
         populateListView();
-        Log.i(TAG,"got just after populate list");
+        //Log.i(TAG,"got just after populate list");
 
         return v;
     }
+
     private void populateListView() {
-        Log.d(TAG, "populateListView: Displaying data in the ListView.");
-        Log.i(TAG,"got in populate list");
-        DatabaseHelper mDatabaseHelper = new DatabaseHelper(getActivity());
+        final ArrayList<String> listData = new ArrayList<>();
+        databaseReference.child("times").addListenerForSingleValueEvent(new ValueEventListener() {
 
-        //get the data and append to a list
-        Cursor data = mDatabaseHelper.getData();
-        ArrayList<String> listData = new ArrayList<>();
-        int count= 1;
-        while(data.moveToNext()){
-            //get the value from the database in column 1
-            //then add it to the ArrayList
-            listData.add(""+count+". "+ data.getString(1));
-            count++;
 
-        }
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-        ArrayList<String> revListData = new ArrayList<String>(listData);
-        Collections.reverse(revListData);
 
+                for (DataSnapshot timesSnapshot: dataSnapshot.getChildren()) {
+                    listData.add(""+timesSnapshot.getKey());
+                }
+
+                Log.d(TAG, "this many times: "+listData.size());
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Error trying to get classified ads for"
+                         +databaseError);
+                Toast.makeText(getActivity(),
+                        "Error trying to get classified ads for ",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         //create the list adapter and set the adapter
         ListAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
-                android.R.layout.simple_list_item_1, revListData);
+                android.R.layout.simple_list_item_1, listData);
         mListView.setAdapter(adapter);
+    }
 
+//
+//    private void populateListView() {
+//        Log.d(TAG, "populateListView: Displaying data in the ListView.");
+//
+//        DatabaseHelper mDatabaseHelper = new DatabaseHelper(getActivity());
+//
+//        //get the data and append to a list
+//        Cursor data = mDatabaseHelper.getData();
+//        ArrayList<String> listData = new ArrayList<>();
+//        int count= 1;
+//        while(data.moveToNext()){
+//            //get the value from the database in column 1
+//            //then add it to the ArrayList
+//            listData.add(""+count+". "+ data.getString(1));
+//            count++;
+//
+//        }
 
+//        ArrayList<String> revListData = new ArrayList<String>(listData);
+//        Collections.reverse(revListData);
+//
+//        //create the list adapter and set the adapter
+//        ListAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+//                android.R.layout.simple_list_item_1, listData);
+//        mListView.setAdapter(adapter);
+//
+//
 
         //set an onItemClickListener to the ListView
 //        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -95,6 +136,6 @@ public class StatsFragment extends Fragment {
 //                }
 //            }
 //        });
-    }
+
 
 }

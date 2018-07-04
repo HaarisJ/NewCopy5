@@ -10,7 +10,10 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment RoomsFragment = new RoomsFragment();
     DatabaseHelper mDatabaseHelper;
 
+    DatabaseReference databaseTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDatabaseHelper = new DatabaseHelper(this);
+        databaseTimes = FirebaseDatabase.getInstance().getReference("times");
 
 
 
@@ -60,15 +65,24 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.navigation_rooms);
     }
 
-    public void AddData(String newEntry) {
-        boolean insertData = mDatabaseHelper.addData(newEntry);
+    //THIS STUFF WAS FOR SQL
 
-        if (insertData) {
-            System.out.println("it worked!!");
-        } else {
-            System.out.println("it DID NOT WORRRK worked!!");
-        }
+//    public void AddData(String newEntry) {
+//        boolean insertData = mDatabaseHelper.addData(newEntry);
+//
+//        if (insertData) {
+//            System.out.println("it worked!!");
+//        } else {
+//            System.out.println("it DID NOT WORRRK worked!!");
+//        }
+//    }
+    public void AddData(String newEntry) {
+        String id = databaseTimes.push().getKey();
+        databaseTimes.child(id).setValue(newEntry);
+        Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
+
     }
+
 
     public void privateRoomJoined(){//called in the rooms frag.
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
