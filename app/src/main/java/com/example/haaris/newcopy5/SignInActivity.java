@@ -48,15 +48,15 @@ public class SignInActivity extends AppCompatActivity {
     String username;
 
 
+
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        username = currentUser.getDisplayName();
-        username = null; //FOR TESTING PURPOSES -- REMOVE LATER
-        setUsername();
-
+        //username = currentUser.getDisplayName();
+        //username = null; //FOR TESTING PURPOSES -- REMOVE LATER
+        //setUsername();
 
     }
 
@@ -65,10 +65,9 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
-
-
         signInBtn = findViewById(R.id.sign_in_button);
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -76,6 +75,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signIn();
+
             }
         });
 
@@ -86,11 +86,10 @@ public class SignInActivity extends AppCompatActivity {
                     Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                     intent.putExtra("username", username);
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    if (username != null){
+                    startActivity(intent);
+                    if (currentUser.getDisplayName() != null){
                         startActivity(intent);
                     }
-
-
 
                 }
             }
@@ -109,8 +108,6 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -126,8 +123,6 @@ public class SignInActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-
-
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -168,32 +163,42 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void setUsername() { //Username is set with Firebase
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (username == null){
 
-            chooseUsername();
+            chooseUsername(); //NEED TO FIND A WAY TO WAIT FOR THIS TO COMPLETE BEFORE MOVING ON
 
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(username)
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(username)
 //                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                    .build();
+                            .build();
 
-            currentUser.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Username Updated");
-                                Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    currentUser.updateProfile(profileUpdates)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("TAG", "Username Updated");
+                                        Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }
+                            });
+                }
+            }, 10000);
+
+
 
         }
+
 //        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
 //        intent.putExtra("username", username);
 //        startActivity(intent);
-
     }
 
     private void chooseUsername() { //User selects a username
@@ -207,6 +212,15 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 username = inputField.getText().toString();
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                chooseUsername();
             }
         });
 

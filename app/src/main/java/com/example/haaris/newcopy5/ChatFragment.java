@@ -24,13 +24,6 @@ public class ChatFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        //usernameTxt = getView().findViewById(R.id.usernameTxt);
-
-        //FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-
-
     }
 
     @Nullable
@@ -55,20 +48,10 @@ public class ChatFragment extends Fragment {
 
         usernameTxt = v.findViewById(R.id.usernameTxt);
 
-
         username = getArguments().getString("username");
         usernameTxt.setText(username);
 
-
-
-
-
         return v;
-
-
-
-
-
     }
 
 }

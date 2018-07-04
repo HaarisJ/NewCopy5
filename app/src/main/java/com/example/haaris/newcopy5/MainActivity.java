@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString("username", username);
 
         ChatFragment.setArguments(bundle);
+        MoreFragment.setArguments(bundle);
 
         hideChatNav();
         this.getWindow().getDecorView().setSystemUiVisibility(
