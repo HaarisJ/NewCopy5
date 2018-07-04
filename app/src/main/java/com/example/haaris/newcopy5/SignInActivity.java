@@ -45,7 +45,7 @@ public class SignInActivity extends AppCompatActivity {
     FirebaseAuth.AuthStateListener mAuthListener;
     GoogleSignInClient mGoogleSignInClient;
     SignInButton signInBtn;
-    String username;
+    public String username;
 
 
 
@@ -56,7 +56,6 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         //username = currentUser.getDisplayName();
         //username = null; //FOR TESTING PURPOSES -- REMOVE LATER
-        //setUsername();
 
     }
 
@@ -87,9 +86,12 @@ public class SignInActivity extends AppCompatActivity {
                     intent.putExtra("username", username);
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                     startActivity(intent);
+                    resetUsername();
                     if (currentUser.getDisplayName() != null){
-                        startActivity(intent);
+                        setUsername();
+
                     }
+
 
                 }
             }
@@ -163,36 +165,27 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void setUsername() { //Username is set with Firebase
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (username == null){
 
             chooseUsername(); //NEED TO FIND A WAY TO WAIT FOR THIS TO COMPLETE BEFORE MOVING ON
 
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Do something after 5s = 5000ms
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(username)
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
 //                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                            .build();
+                    .build();
 
-                    currentUser.updateProfile(profileUpdates)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d("TAG", "Username Updated");
-                                        Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                }
-                            });
-                }
-            }, 10000);
-
-
+            currentUser.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("TAG", "Username Updated");
+                                Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
         }
 
@@ -224,9 +217,29 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-
         builder.show();
 
+    }
+
+    private void resetUsername(){
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(null)
+//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                .build();
+
+        currentUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "Username Updated");
+                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 
