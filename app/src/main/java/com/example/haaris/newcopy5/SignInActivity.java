@@ -54,8 +54,6 @@ public class SignInActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //username = currentUser.getDisplayName();
-        //username = null; //FOR TESTING PURPOSES -- REMOVE LATER
 
     }
 
@@ -77,20 +75,27 @@ public class SignInActivity extends AppCompatActivity {
 
             }
         });
+        //resetUsername();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() != null ){
-                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                    intent.putExtra("username", username);
+//                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+//                    intent.putExtra("username", username);
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    startActivity(intent);
                     resetUsername();
-                    if (currentUser.getDisplayName() != null){
+                    Toast.makeText(SignInActivity.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                    if (currentUser.getDisplayName() == null) {
                         setUsername();
-
                     }
+                    else {
+                        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                        intent.putExtra("username", username);
+                        startActivity(intent);
+                    }
+
+
 
 
                 }
@@ -165,34 +170,28 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void setUsername() { //Username is set with Firebase
-        if (username == null){
 
-            chooseUsername(); //NEED TO FIND A WAY TO WAIT FOR THIS TO COMPLETE BEFORE MOVING ON
+        chooseUsername(); //NEED TO FIND A WAY TO WAIT FOR THIS TO COMPLETE BEFORE MOVING ON
 
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(username)
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
 //                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                    .build();
+                .build();
 
-            currentUser.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Username Updated");
-                                Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
-                            }
+        currentUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "Username Updated");
+                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
                         }
-                    });
-
-        }
-
-//        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-//        intent.putExtra("username", username);
-//        startActivity(intent);
+                    }
+                });
     }
+
 
     private void chooseUsername() { //User selects a username
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -205,6 +204,9 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 username = inputField.getText().toString();
+                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
             }
 
         });
@@ -216,14 +218,14 @@ public class SignInActivity extends AppCompatActivity {
                 chooseUsername();
             }
         });
-
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 
     private void resetUsername(){
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(null)
@@ -235,8 +237,8 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d("TAG", "Username Updated");
-                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", "Username Reset");
+                            Toast.makeText(SignInActivity.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
