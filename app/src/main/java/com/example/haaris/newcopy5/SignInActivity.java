@@ -48,24 +48,18 @@ public class SignInActivity extends AppCompatActivity {
     public String username;
 
 
-
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         signInBtn = findViewById(R.id.sign_in_button);
-
-
-
         mAuth = FirebaseAuth.getInstance();
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
@@ -75,29 +69,23 @@ public class SignInActivity extends AppCompatActivity {
 
             }
         });
-        //resetUsername();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() != null ){
-//                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-//                    intent.putExtra("username", username);
+//                    resetUsername();  //ENABLE THIS TO TEST USERNAME DIALOG
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    resetUsername();
-                    Toast.makeText(SignInActivity.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
                     if (currentUser.getDisplayName() == null) {
-                        setUsername();
+                        chooseUsername();
                     }
                     else {
                         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                         intent.putExtra("username", username);
                         startActivity(intent);
+                        Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+
                     }
-
-
-
-
                 }
             }
         };
@@ -111,8 +99,6 @@ public class SignInActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
     }
 
     private void signIn() {
@@ -150,7 +136,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
-                            Toast.makeText(SignInActivity.this, "Google Sign In Success", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(SignInActivity.this, "Google Sign In Success", Toast.LENGTH_LONG).show();
 
                             FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -169,30 +155,6 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    private void setUsername() { //Username is set with Firebase
-
-        chooseUsername(); //NEED TO FIND A WAY TO WAIT FOR THIS TO COMPLETE BEFORE MOVING ON
-
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(username)
-//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                .build();
-
-        currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "Username Updated");
-                            Toast.makeText(SignInActivity.this, "Username Updated", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-
     private void chooseUsername() { //User selects a username
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose a username");
@@ -204,6 +166,25 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 username = inputField.getText().toString();
+
+                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(username)
+//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                        .build();
+
+                currentUser.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("TAG", "Username Updated");
+                                    Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
                 Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                 intent.putExtra("username", username);
                 startActivity(intent);
@@ -220,7 +201,6 @@ public class SignInActivity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
     private void resetUsername(){
@@ -238,12 +218,9 @@ public class SignInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "Username Reset");
-                            Toast.makeText(SignInActivity.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, "Username Reset", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
-
-
-
 }
