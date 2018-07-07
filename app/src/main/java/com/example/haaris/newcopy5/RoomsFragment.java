@@ -45,6 +45,9 @@ public class RoomsFragment extends Fragment {
 
                 else {
                     ((MainActivity)getActivity()).publicRoomJoined();
+                    if(PUBROOMS.equals("WE GOT ONE") ){
+                        my3x3.setBackgroundColor(Color.GRAY);// set all pubroom buttons to gray
+                    }
                 }
             }
         });
