@@ -34,9 +34,20 @@ public class RoomsFragment extends Fragment {
         my3x3.setBackgroundColor(Color.GRAY);
 
         publicGridView = v.findViewById(R.id.pubRoomsGrid);
-        PublicGridAdapter adapter = new PublicGridAdapter(v.getContext(), sessionIcons, sessions);
+        PublicGridAdapter adapter = new PublicGridAdapter(getContext(), sessionIcons, sessions);
         publicGridView.setAdapter(adapter);
+        publicGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0){
+                   startActivity(new Intent(getContext(), CreatePublicRoomActivity.class));
+                }
 
+                else {
+                    ((MainActivity)getActivity()).publicRoomJoined();
+                }
+            }
+        });
 
         my3x3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,23 +60,6 @@ public class RoomsFragment extends Fragment {
             }
         });
 
-        publicGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                if (i==0){
-                    Intent myIntent = new Intent(view.getContext(), CreatePublicRoomActivity.class);
-                    view.getContext().startActivity(myIntent);
-                }
-
-                else {
-                    ((MainActivity)getActivity()).publicRoomJoined();
-                    if(PUBROOMS.equals("WE GOT ONE") ){
-                        my3x3.setBackgroundColor(Color.GRAY);// set all pubroom buttons to gray
-                    }
-                }
-            }
-        });
         return v;
     }
 }
