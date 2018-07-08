@@ -15,6 +15,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     private FrameLayout fragmentContainer;
     Fragment StatsFragment = new StatsFragment();
     Fragment TimerFragment = new TimerFragment();
@@ -22,10 +24,21 @@ public class MainActivity extends AppCompatActivity {
     Fragment ChatFragment = new ChatFragment();
     Fragment RoomsFragment = new RoomsFragment();
 
+    String username;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        username = getIntent().getStringExtra("username");
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
+
+        ChatFragment.setArguments(bundle);
+        MoreFragment.setArguments(bundle);
+
         hideChatNav();
         fullscreen();
 

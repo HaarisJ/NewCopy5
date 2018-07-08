@@ -24,4 +24,5 @@
         <item>Skewb</item>
         <item>Clock</item>
     </string-array>
+    <string name="signin_other_error">Sign In Failed RIP</string>
 </resources>
