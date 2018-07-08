@@ -33,13 +33,13 @@
     <GridView
         android:id="@+id/pubRoomsGrid"
         android:layout_width="match_parent"
-        android:layout_height="194dp"
+        android:layout_height="500dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="200dp"
         android:columnWidth="100dp"
         android:numColumns="auto_fit"
-        android:rowHeight="250dp"
+        android:rowHeight="100dp"
         android:stretchMode="columnWidth" />
 
 
