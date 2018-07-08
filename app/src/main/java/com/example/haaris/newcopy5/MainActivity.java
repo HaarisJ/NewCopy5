@@ -15,6 +15,9 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,20 +27,10 @@ public class MainActivity extends AppCompatActivity {
     Fragment MoreFragment = new MoreFragment();
     Fragment ChatFragment = new ChatFragment();
     Fragment RoomsFragment = new RoomsFragment();
-    DatabaseHelper mDatabaseHelper;
-
-    DatabaseReference databaseTimes;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mDatabaseHelper = new DatabaseHelper(this);
-        databaseTimes = FirebaseDatabase.getInstance().getReference("times");
-
-
-
         hideChatNav();
         this.getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -76,12 +69,13 @@ public class MainActivity extends AppCompatActivity {
 //            System.out.println("it DID NOT WORRRK worked!!");
 //        }
 //    }
-    public void AddData(String newEntry) {
-        String id = databaseTimes.push().getKey();
-        databaseTimes.child(id).setValue(newEntry);
-        Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
-
-    }
+//    public void AddData(String newEntry) {
+//        String id = databaseTimes.push().getKey();
+//        Times time = new Times(id, newEntry);
+//        databaseTimes.child(id).setValue(newEntry);
+//        Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
+//
+//    }
 
 
     public void privateRoomJoined(){//called in the rooms frag.
@@ -114,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
     public void hideNav() {
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.setVisibility(View.GONE);

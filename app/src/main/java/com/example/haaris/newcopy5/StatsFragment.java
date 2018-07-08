@@ -5,12 +5,14 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -27,62 +30,71 @@ import java.util.Collections;
 import java.util.List;
 
 public class StatsFragment extends Fragment {
-    TextView currAO5;
     String ao5;
-
-    DatabaseHelper mDatabaseHelper;
-    private ListView mListView;
-
-    private DatabaseReference databaseReference;
-
-
+    ArrayAdapter<String> adapter;
+    ArrayList<String> timesArray;
+    ListView timesList;
+    String time;
+    int count;
     private static final String TAG = "ListDataActivity";
+    ArrayList<String> revTimesArray;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_stats, null);
+        View view = inflater.inflate(R.layout.fragment_stats, null);
+        timesList = (ListView) view.findViewById(R.id.timesList);
+        timesArray = new ArrayList<String>();
 
 
-        mListView = (ListView) v.findViewById(R.id.listView);
-//        Log.i(TAG,"got just before populate list");
 
+        return view;
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+        super.onViewCreated(view, savedInstanceState);
         populateListView();
-        //Log.i(TAG,"got just after populate list");
-
-        return v;
     }
 
     private void populateListView() {
-        final ArrayList<String> listData = new ArrayList<>();
-        databaseReference.child("times").addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("times");
+
+        db.addValueEventListener(new ValueEventListener() {
 
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-
+                count=0;
                 for (DataSnapshot timesSnapshot: dataSnapshot.getChildren()) {
-                    listData.add(""+timesSnapshot.getKey());
+                    count++;
+
+                    time = ""+timesSnapshot.getValue();
+
+                    timesArray.add(""+count+". "+time);
                 }
 
-                Log.d(TAG, "this many times: "+listData.size());
+                revTimesArray = new ArrayList<String>(timesArray);
+                Collections.reverse(revTimesArray);
+
+                adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+                        android.R.layout.simple_list_item_1, revTimesArray);
+                timesList.setAdapter(adapter);
+
+                adapter.notifyDataSetChanged();
+
+
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "Error trying to get classified ads for"
-                         +databaseError);
-                Toast.makeText(getActivity(),
-                        "Error trying to get classified ads for ",
-                        Toast.LENGTH_SHORT).show();
+
             }
+
         });
-        //create the list adapter and set the adapter
-        ListAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
-                android.R.layout.simple_list_item_1, listData);
-        mListView.setAdapter(adapter);
+
     }
+
 
 //
 //    private void populateListView() {

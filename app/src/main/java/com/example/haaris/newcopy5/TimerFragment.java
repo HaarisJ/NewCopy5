@@ -22,6 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import net.gnehzr.tnoodle.scrambles.PuzzleStateAndGenerator;
 
 import java.util.ArrayList;
@@ -52,6 +55,9 @@ public class TimerFragment extends Fragment {
     ConstraintLayout mLayout;
     String col;
     TextView ScrambleTextView;
+    DatabaseReference databaseTimes;
+
+
 
     long[] recent5= new long[] {0,0,0,0,0};
     long[] recent12= new long[] {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -65,22 +71,15 @@ public class TimerFragment extends Fragment {
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
     String scrambleType = "777";
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState== null){
-            System.out.println("got null in oncreate");
 
-        }
-        else{
-            System.out.println("got NOTNULL");
 
-        }
+    public void AddData(String newEntry) {
+        String id = databaseTimes.push().getKey();
+        Times time = new Times(id, newEntry);
+        databaseTimes.child(id).setValue(newEntry);
+        //Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
+
     }
-*/
-
-
-
 
     Runnable updateTimerThread = new Runnable(){
         @Override
@@ -209,6 +208,7 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        databaseTimes = FirebaseDatabase.getInstance().getReference("times");
 
 
         if(savedInstanceState != null) {
@@ -309,7 +309,7 @@ public class TimerFragment extends Fragment {
                     customHandler.removeCallbacks(holdTask);
                     customHandler.postDelayed(screenShow, 0);
 
-                    ((MainActivity)getActivity()).AddData(""+result.getText());
+                    AddData(""+result.getText());
 
                     solveNum++;
                     if (solveNum < 10) {
