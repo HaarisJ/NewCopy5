@@ -9,18 +9,20 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class PublicGridAdapter extends BaseAdapter {
 
-    private int icons[];
+    private ArrayList<Integer> icons;
 
-    private String seshNames[];
+    private ArrayList<String> seshNames;
 
     private Context context;
 
     private LayoutInflater inflater;
 
 
-    public PublicGridAdapter(Context context, int icons[], String seshNames[] ){
+    public PublicGridAdapter(Context context, ArrayList<Integer> icons, ArrayList<String> seshNames){
 
         this.context = context;
         this.icons = icons;
@@ -30,12 +32,12 @@ public class PublicGridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return seshNames.length;
+        return seshNames.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return seshNames[i];
+        return seshNames.get(i);
     }
 
     @Override
@@ -57,8 +59,8 @@ public class PublicGridAdapter extends BaseAdapter {
         ImageView cubeIcon = (ImageView) gridView.findViewById(R.id.cube_icon);
         TextView  seshName = (TextView) gridView.findViewById(R.id.sesh_name);
 
-        cubeIcon.setImageResource(icons[i]);
-        seshName.setText(seshNames[i]);
+        cubeIcon.setImageResource(icons.get(i));
+        seshName.setText(seshNames.get(i));
 
         return gridView;
     }
