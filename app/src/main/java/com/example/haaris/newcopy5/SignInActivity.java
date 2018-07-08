@@ -81,7 +81,7 @@ public class SignInActivity extends AppCompatActivity {
                     }
                     else {
                         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                        intent.putExtra("username", username);
+                        intent.putExtra("username", currentUser.getDisplayName());
                         startActivity(intent);
                         Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
