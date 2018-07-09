@@ -80,12 +80,16 @@ public class MainActivity extends AppCompatActivity {
         else{
             bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.GONE);
             bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.VISIBLE);
-            getSupportFragmentManager().beginTransaction().show(ChatFragment).commit();
+            //getSupportFragmentManager().beginTransaction().show(ChatFragment).commit();
             getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
             bottomNav.setSelectedItemId(R.id.navigation_chat);
             bottomNav.setOnNavigationItemSelectedListener(navListener);
         }
 
+    }
+
+    public void refreshChat(){
+        getSupportFragmentManager().beginTransaction().detach(ChatFragment).attach(ChatFragment).commit();
     }
 
     public void hideNav() {
