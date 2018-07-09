@@ -3,6 +3,7 @@ package com.example.haaris.newcopy5;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,11 +30,12 @@ import java.util.Map;
 public class ChatFragment extends Fragment {
     Button leaveRoomBtn;
     String username;
-    String roomName;
+    String roomID;
     private Button sendBtn;
     private TextView chatTxt;
     private EditText inputMsgTxt;
     private DatabaseReference root;
+    private DatabaseReference getUserRef;
     private String tempKey, chatMsg, chatUsername;
 
 
@@ -64,59 +67,117 @@ public class ChatFragment extends Fragment {
             }
         });
 
-
+        roomID = "6";
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         username = currentUser.getDisplayName();
 
-        //username = getArguments().getString("username");
-
-        root = FirebaseDatabase.getInstance().getReference().child("1531060596182");
-
-        sendBtn.setOnClickListener(new View.OnClickListener() {
+        getUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("currentRoom");
+        getUserRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Map<String,Object> map = new HashMap<String,Object>();
-                tempKey = root.push().getKey();
-                root.updateChildren(map);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                roomID = dataSnapshot.getValue(String.class);
+                root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
 
-                DatabaseReference msgRoot = root.child(tempKey);
-                Map<String,Object> map2 = new HashMap<String,Object>();
-                map2.put("name", username);
-                map2.put("msg", inputMsgTxt.getText().toString());
+                sendBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Map<String,Object> map = new HashMap<String,Object>();
+                        tempKey = root.push().getKey();
+                        root.updateChildren(map);
 
-                msgRoot.updateChildren(map2);
+                        DatabaseReference msgRoot = root.child(tempKey);
+                        Map<String,Object> map2 = new HashMap<String,Object>();
+                        map2.put("name", username);
+                        map2.put("msg", inputMsgTxt.getText().toString());
+
+                        msgRoot.updateChildren(map2);
+
+                    }
+                });
+
+                root.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        appendChatConv(dataSnapshot);
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        appendChatConv(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError dError) {
 
             }
         });
+//        //username = getArguments().getString("username");
 
-        root.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                appendChatConv(dataSnapshot);
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                appendChatConv(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
+//
+//        sendBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Map<String,Object> map = new HashMap<String,Object>();
+//                tempKey = root.push().getKey();
+//                root.updateChildren(map);
+//
+//                DatabaseReference msgRoot = root.child(tempKey);
+//                Map<String,Object> map2 = new HashMap<String,Object>();
+//                map2.put("name", username);
+//                map2.put("msg", inputMsgTxt.getText().toString());
+//
+//                msgRoot.updateChildren(map2);
+//
+//            }
+//        });
+//
+//        root.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                appendChatConv(dataSnapshot);
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                appendChatConv(dataSnapshot);
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         return v;
     }

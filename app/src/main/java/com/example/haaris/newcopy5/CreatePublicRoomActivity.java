@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CreatePublicRoomActivity extends AppCompatActivity {
 
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
 
     private EditText RoomNameEditText;
     private Button ScrambleTypeButton;
@@ -120,9 +120,9 @@ public class CreatePublicRoomActivity extends AppCompatActivity {
                     return;
                 }
 
-                Room room = new Room(RoomName, PuzzleType, passNeeded, password);
                 roomID = Long.toString(System.currentTimeMillis());
-                mDatabase.child("rooms").child(roomID).setValue(room);
+                Room room = new Room(RoomName, PuzzleType, passNeeded, password, roomID);
+                mRef.child("rooms").child(roomID).setValue(room);
                 finish();
             }
         });

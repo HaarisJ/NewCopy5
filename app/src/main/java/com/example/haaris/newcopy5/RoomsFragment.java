@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +37,7 @@ public class RoomsFragment extends Fragment {
 
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     DatabaseReference mRef;
+    DatabaseReference mUserRef;
 
     Button my3x3;
     String PUBROOMS = "NONE";
@@ -50,6 +53,8 @@ public class RoomsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_rooms, null);
+
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         my3x3 = (Button) v.findViewById(R.id.my3x3);
         my3x3.setVisibility(View.VISIBLE);
@@ -68,6 +73,7 @@ public class RoomsFragment extends Fragment {
             }
         });
 
+        mUserRef = mDatabase.getReference();
         mRef = mDatabase.getReference().child("rooms");
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -95,6 +101,7 @@ public class RoomsFragment extends Fragment {
                         }
 
                         else {
+                            final String roomID = roomsList.get(i-1).roomID;
                             if (roomsList.get(i-1).passNeeded){
                                 final String correctPassword = roomsList.get(i-1).password;
                                 AlertDialog.Builder passwordAlertBuilder = new AlertDialog.Builder(getContext());
@@ -109,6 +116,7 @@ public class RoomsFragment extends Fragment {
                                         //What ever you want to do with the value
                                         String passwordGuess = edittext.getText().toString();
                                         if (passwordGuess.equals(correctPassword)){
+                                            mUserRef.child("users").child(currentUser.getUid()).child("currentRoom").setValue(roomID);
                                             ((MainActivity) getActivity()).publicRoomJoined();
                                         }
                                         else {
@@ -131,6 +139,7 @@ public class RoomsFragment extends Fragment {
                                 passwordAlert.show();
                             }
                             else {
+                                mUserRef.child("users").child(currentUser.getUid()).child("currentRoom").setValue(roomID);
                                 ((MainActivity) getActivity()).publicRoomJoined();
                             }
                             if(PUBROOMS.equals("WE GOT ONE") ){
