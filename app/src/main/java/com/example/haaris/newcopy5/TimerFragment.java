@@ -75,9 +75,7 @@ public class TimerFragment extends Fragment {
 
     public void AddData(String newEntry) {
         String id = databaseTimes.push().getKey();
-        Times time = new Times(id, newEntry);
         databaseTimes.child(id).setValue(newEntry);
-        //Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
 
     }
 
