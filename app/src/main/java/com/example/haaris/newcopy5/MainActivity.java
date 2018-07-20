@@ -21,25 +21,32 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     private FrameLayout fragmentContainer;
     Fragment StatsFragment = new StatsFragment();
     Fragment TimerFragment = new TimerFragment();
     Fragment MoreFragment = new MoreFragment();
     Fragment ChatFragment = new ChatFragment();
     Fragment RoomsFragment = new RoomsFragment();
+
+    String username;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        username = getIntent().getStringExtra("username");
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
+
+        ChatFragment.setArguments(bundle);
+        MoreFragment.setArguments(bundle);
+
         hideChatNav();
-        this.getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        //| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        fullscreen();
 
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
@@ -58,26 +65,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.navigation_rooms);
     }
 
-    //THIS STUFF WAS FOR SQL
-
-//    public void AddData(String newEntry) {
-//        boolean insertData = mDatabaseHelper.addData(newEntry);
-//
-//        if (insertData) {
-//            System.out.println("it worked!!");
-//        } else {
-//            System.out.println("it DID NOT WORRRK worked!!");
-//        }
-//    }
-//    public void AddData(String newEntry) {
-//        String id = databaseTimes.push().getKey();
-//        Times time = new Times(id, newEntry);
-//        databaseTimes.child(id).setValue(newEntry);
-//        Toast.makeText(this,"Timeadded", Toast.LENGTH_LONG).show();
-//
-//    }
-
-
     public void privateRoomJoined(){//called in the rooms frag.
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
@@ -95,19 +82,22 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
             bottomNav.setSelectedItemId(R.id.navigation_rooms);
             bottomNav.setOnNavigationItemSelectedListener(navListener);
-
         }
         else{
             bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.GONE);
             bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.VISIBLE);
-            getSupportFragmentManager().beginTransaction().show(ChatFragment).commit();
+            //getSupportFragmentManager().beginTransaction().show(ChatFragment).commit();
             getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
             bottomNav.setSelectedItemId(R.id.navigation_chat);
             bottomNav.setOnNavigationItemSelectedListener(navListener);
-
         }
 
     }
+
+    public void refreshChat(){
+        getSupportFragmentManager().beginTransaction().detach(ChatFragment).attach(ChatFragment).commit();
+    }
+
     public void hideNav() {
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.setVisibility(View.GONE);
@@ -121,6 +111,21 @@ public class MainActivity extends AppCompatActivity {
     public void hideChatNav(){
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.GONE);
+    }
+
+    public void showChatNav(){
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.VISIBLE);
+    }
+
+    public void fullscreen(){
+        this.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -138,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
-
 
                         selectedFragment = TimerFragment;
 

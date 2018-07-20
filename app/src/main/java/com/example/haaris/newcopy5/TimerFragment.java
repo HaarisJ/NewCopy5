@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,9 +45,6 @@ import static android.content.ContentValues.TAG;
 
 public class TimerFragment extends Fragment {
     Button startBtn,stopBtn, ao5Btn,ao12Btn;
-
-    private static final String TAG = "MainActivity";
-
     TextView result,ao5,ao12;
     Handler customHandler = new Handler();
     ListView timeList;
@@ -70,7 +68,7 @@ public class TimerFragment extends Fragment {
     long sum;
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
-    String scrambleType = "777";
+    String scrambleType = "444";
 
 
     public void AddData(String newEntry) {
@@ -96,7 +94,7 @@ public class TimerFragment extends Fragment {
             }
             else{
                 result.setText("" + mins + ":" + String.format("%02d", secs) + "." +
-                        String.format("%02d", ms));
+                            String.format("%02d", ms));
             }
             customHandler.postDelayed(this,0);
         }
@@ -201,6 +199,7 @@ public class TimerFragment extends Fragment {
             ((MainActivity)getActivity()).showNav();
         }
     };
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -401,8 +400,6 @@ public class TimerFragment extends Fragment {
             ScrambleTextView.setText(""+finalResult+"");
         }
     }
-
-
    /* @Override
     public void onPause() {
         super.onPause();

@@ -1,141 +1,134 @@
 package com.example.haaris.newcopy5;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.app.ProgressDialog;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PlayGamesAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private final static int RC_SIGN_IN = 2;
+    private final static int RC_SIGN_IN = 4;
     private FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener mAuthListener;
+    GoogleSignInClient mGoogleSignInClient;
+    SignInButton signInBtn;
+    public String username;
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        signInBtn = findViewById(R.id.sign_in_button);
         mAuth = FirebaseAuth.getInstance();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null)
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        //String playerName = currentUser.getDisplayName();
-        TextView dispname = findViewById(R.id.txt_dispname);
-        EditText chosenUsername = findViewById(R.id.txt_username);
-//        signInSilently();
+        signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
 
-  //UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-    //           .setDisplayName("Paradox")
-//              .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-      //          .build();
+            }
+        });
 
-//          currentUser.updateProfile(profileUpdates)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//                            Log.d("TAG", "User profile updated.");
-//                        }
-//                    }
-//                });
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (mAuth.getCurrentUser() != null ){
+//                    resetUsername();  //ENABLE THIS TO TEST USERNAME DIALOG
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (currentUser.getDisplayName() == null) {
+                        chooseUsername();
+                    }
+                    else {
+                        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                        intent.putExtra("username", currentUser.getDisplayName());
+                        startActivity(intent);
+                        Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
-         // dispname.setText(currentUser.getDisplayName()); //display player name
-
-
-
-        //updateUI(currentUser);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        signInSilently();
-    }
-
-    //Manual Sign In
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                // The signed in account is stored in the result.
-                GoogleSignInAccount signedInAccount = result.getSignInAccount();
-                firebaseAuthWithPlayGames(signedInAccount);
-            } else {
-                String message = result.getStatus().getStatusMessage();
-                if (message == null || message.isEmpty()) {
-                    message = getString(R.string.signin_other_error);
+                    }
                 }
-                new AlertDialog.Builder(this).setMessage(message)
-                        .setNeutralButton(android.R.string.ok, null).show();
+            }
+        };
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("TAG", "Google sign in failed", e);
+                Toast.makeText(this, "Activity Result Failed", Toast.LENGTH_LONG).show();
+
             }
         }
     }
 
-    private void signInSilently() {
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
-                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-        signInClient.silentSignIn().addOnCompleteListener(this,
-                new OnCompleteListener<GoogleSignInAccount>() {
-                    @Override
-                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        if (task.isSuccessful()) {
-                            // The signed in account is stored in the task's result.
-                            GoogleSignInAccount signedInAccount = task.getResult();
-                            firebaseAuthWithPlayGames(signedInAccount);
-                        } else {
-                            startSignInIntent();
-                            // Player will need to sign-in explicitly using via UI
-                        }
-                    }
-                });
-    }
-    // Start manual sign-in when silent fails
-    private void startSignInIntent() {
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
-                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-        Intent intent = signInClient.getSignInIntent();
-        startActivityForResult(intent, RC_SIGN_IN);
-    }
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
-
-    // Call this both in the silent sign-in task's OnCompleteListener and in the
-    // Activity's onActivityResult handler.
-    private void firebaseAuthWithPlayGames(GoogleSignInAccount acct) {
-        //Log.d("TAG", "firebaseAuthWithPlayGames:" + acct.getId());
-
-        AuthCredential credential = PlayGamesAuthProvider.getCredential(acct.getServerAuthCode());
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -143,14 +136,18 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+                            //Toast.makeText(SignInActivity.this, "Google Sign In Success", Toast.LENGTH_LONG).show();
+
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+
                         } else {
+
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            Toast.makeText(SignInActivity.this, "Auth With Google Failed", Toast.LENGTH_LONG).show();
+
+                            //Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+
                         }
 
                         // ...
@@ -158,9 +155,72 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
+    private void chooseUsername() { //User selects a username
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose a username");
 
+        final EditText inputField = new EditText(this);
 
+        builder.setView(inputField);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                username = inputField.getText().toString();
 
+                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(username)
+//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                        .build();
 
+                currentUser.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("TAG", "Username Updated");
+                                    Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                chooseUsername();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void resetUsername(){
+
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(null)
+//                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                .build();
+
+        currentUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "Username Reset");
+                            Toast.makeText(SignInActivity.this, "Username Reset", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 }
