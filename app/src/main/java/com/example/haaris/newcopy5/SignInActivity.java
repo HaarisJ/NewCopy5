@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -83,7 +82,7 @@ public class SignInActivity extends AppCompatActivity {
                         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                         intent.putExtra("username", currentUser.getDisplayName());
                         startActivity(intent);
-                        Toast.makeText(SignInActivity.this, "Welcome " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignInActivity.this, "Welcome " +  currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
                     }
                 }
