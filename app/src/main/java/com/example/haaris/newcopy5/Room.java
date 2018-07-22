@@ -11,16 +11,18 @@ public class Room {
     public String password;
     public int members = 1;
     public String roomID;
+    public String host;
 
     public Room(){
 
     }
 
-    public Room(String name, String puzzle, boolean passNeeded, String password, String roomID){
+    public Room(String name, String puzzle, boolean passNeeded, String password, String roomID, String hostID){
         this.name = name;
         this.puzzle = puzzle;
         this.passNeeded = passNeeded;
         this.password = password;
         this.roomID = roomID;
+        this.host = hostID;
     }
 }

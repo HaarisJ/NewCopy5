@@ -1,6 +1,7 @@
 package com.example.haaris.newcopy5;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -86,9 +87,13 @@ public class RoomsFragment extends Fragment {
                 sessionIconsList.add(R.drawable.ic_add_box_black_200dp);
 
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    roomsList.add(ds.getValue(Room.class));
-                    sessionsList.add(ds.getValue(Room.class).name);
-                    sessionIconsList.add(getIcon(ds.getValue(Room.class).puzzle));
+                    Room roomAdded = ds.getValue(Room.class);
+                    if (roomAdded.members == 0){
+                        mRef.child(roomAdded.roomID).setValue(null);
+                    }
+                    roomsList.add(roomAdded);
+                    sessionsList.add(roomAdded.name);
+                    sessionIconsList.add(getIcon(roomAdded.puzzle));
                 }
 
                 PublicGridAdapter adapter = new PublicGridAdapter(getContext(), sessionIconsList, sessionsList);
@@ -97,7 +102,7 @@ public class RoomsFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         if (i == 0){
-                            startActivity(new Intent(getContext(), CreatePublicRoomActivity.class));
+                           startActivity(new Intent(getContext(), CreatePublicRoomActivity.class));
                         }
 
                         else {
@@ -140,6 +145,7 @@ public class RoomsFragment extends Fragment {
                             }
                             else {
                                 mUserRef.child("users").child(currentUser.getUid()).child("currentRoom").setValue(roomID);
+                                mRef.child(roomsList.get(i-1).roomID).child("members").setValue((roomsList.get(i-1).members+1));
                                 ((MainActivity) getActivity()).publicRoomJoined();
                             }
                             if(PUBROOMS.equals("WE GOT ONE") ){
@@ -159,6 +165,7 @@ public class RoomsFragment extends Fragment {
 
         return v;
     }
+
 
     public int getIcon(String puzzleType){
         switch (puzzleType){
@@ -188,6 +195,7 @@ public class RoomsFragment extends Fragment {
                 return 0;
         }
     }
+
 
 
 }
