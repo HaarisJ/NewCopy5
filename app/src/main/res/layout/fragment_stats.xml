@@ -4,7 +4,9 @@
 
     <ListView
         android:id="@+id/timesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="171dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

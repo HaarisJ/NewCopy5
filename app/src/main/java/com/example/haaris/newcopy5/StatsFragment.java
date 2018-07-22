@@ -74,7 +74,6 @@ public class StatsFragment extends Fragment {
                 timesArray= new ArrayList<String>();
 
                 for (DataSnapshot timesSnapshot: dataSnapshot.getChildren()) {//called every time frag is opened
-                    Toast.makeText(getContext(), "inforloop", Toast.LENGTH_SHORT).show();
                     count++;
 
                     time = ""+timesSnapshot.getValue();

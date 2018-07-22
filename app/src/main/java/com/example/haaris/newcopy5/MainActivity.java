@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().hide(TimerFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
+                        getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         selectedFragment = MoreFragment;
 
