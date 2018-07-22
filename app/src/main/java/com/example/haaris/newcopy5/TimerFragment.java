@@ -26,6 +26,9 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import net.gnehzr.tnoodle.scrambles.PuzzleStateAndGenerator;
 
 import java.util.ArrayList;
@@ -68,7 +71,7 @@ public class TimerFragment extends Fragment {
     long sum;
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
-    String scrambleType = "444";
+    String scrambleType = "4x4";
 
 
     public void AddData(String newEntry) {
@@ -351,37 +354,37 @@ public class TimerFragment extends Fragment {
             PuzzleStateAndGenerator solver;
             publishProgress("cheese");
             switch (scrambleType) {
-                case "333": ThreeByThreeCubePuzzle cubeState = new ThreeByThreeCubePuzzle();
+                case "3x3": ThreeByThreeCubePuzzle cubeState = new ThreeByThreeCubePuzzle();
                     solver = cubeState.generateRandomMoves(k);
                     break;
-                case "444": FourByFourCubePuzzle cubeState4 = new FourByFourCubePuzzle();
+                case "4x4": FourByFourCubePuzzle cubeState4 = new FourByFourCubePuzzle();
                     solver = cubeState4.generateRandomMoves(k);
                     break;
-                case "222": TwoByTwoCubePuzzle cubeState2 = new TwoByTwoCubePuzzle();
+                case "2x2": TwoByTwoCubePuzzle cubeState2 = new TwoByTwoCubePuzzle();
                     solver = cubeState2.generateRandomMoves(k);
                     break;
-                case "pyra": PyraminxPuzzle cubeStateP = new PyraminxPuzzle();
+                case "Pyraminx": PyraminxPuzzle cubeStateP = new PyraminxPuzzle();
                     solver = cubeStateP.generateRandomMoves(k);
                     break;
-                case "squan": SquareOnePuzzle cubeStateS1 = new SquareOnePuzzle();
+                case "Square One": SquareOnePuzzle cubeStateS1 = new SquareOnePuzzle();
                     solver = cubeStateS1.generateRandomMoves(k);
                     break;
-                case "skewb": SkewbPuzzle cubeStateSk = new SkewbPuzzle();
+                case "Skewb": SkewbPuzzle cubeStateSk = new SkewbPuzzle();
                     solver = cubeStateSk.generateRandomMoves(k);
                     break;
-                case "mega": MegaminxPuzzle cubeStateM = new MegaminxPuzzle();
+                case "Megaminx": MegaminxPuzzle cubeStateM = new MegaminxPuzzle();
                     solver = cubeStateM.generateRandomMoves(k);
                     break;
-                case "clock": ClockPuzzle cubeStateC = new ClockPuzzle();
+                case "Clock": ClockPuzzle cubeStateC = new ClockPuzzle();
                     solver = cubeStateC.generateRandomMoves(k);
                     break;
-                case "555": CubePuzzle cubeState5 = new CubePuzzle(5);
+                case "5x5": CubePuzzle cubeState5 = new CubePuzzle(5);
                     solver = cubeState5.generateRandomMoves(k);
                     break;
-                case "666": CubePuzzle cubeState6 = new CubePuzzle(6);
+                case "6x6": CubePuzzle cubeState6 = new CubePuzzle(6);
                     solver = cubeState6.generateRandomMoves(k);
                     break;
-                case "777": CubePuzzle cubeState7 = new CubePuzzle(7);
+                case "7x7": CubePuzzle cubeState7 = new CubePuzzle(7);
                     solver = cubeState7.generateRandomMoves(k);
                     break;
                 default:

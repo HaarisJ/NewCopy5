@@ -36,7 +36,7 @@ public class ChatFragment extends Fragment {
     private EditText inputMsgTxt;
     private DatabaseReference root;
     private DatabaseReference getUserRef;
-    private String tempKey, chatMsg, chatUsername;
+    private String tempKey, chatMsg, chatUsername, messageTxt;
 
 
 
@@ -73,64 +73,6 @@ public class ChatFragment extends Fragment {
         username = currentUser.getDisplayName();
 
         getUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("currentRoom");
-//        getUserRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                roomID = dataSnapshot.getValue(String.class);
-//                root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
-//
-//                sendBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Map<String,Object> map = new HashMap<String,Object>();
-//                        tempKey = root.push().getKey();
-//                        root.updateChildren(map);
-//
-//                        DatabaseReference msgRoot = root.child(tempKey);
-//                        Map<String,Object> map2 = new HashMap<String,Object>();
-//                        map2.put("name", username);
-//                        map2.put("msg", inputMsgTxt.getText().toString());
-//
-//                        msgRoot.updateChildren(map2);
-//
-//                    }
-//                });
-//
-//                root.addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                        appendChatConv(dataSnapshot);
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                        appendChatConv(dataSnapshot);
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError dError) {
-//
-//            }
-//        });
-//        //username = getArguments().getString("username");
 
         root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
 
@@ -143,10 +85,14 @@ public class ChatFragment extends Fragment {
 
                 DatabaseReference msgRoot = root.child(tempKey);
                 Map<String,Object> map2 = new HashMap<String,Object>();
-                map2.put("name", username);
-                map2.put("msg", inputMsgTxt.getText().toString());
 
-                msgRoot.updateChildren(map2);
+                messageTxt = inputMsgTxt.getText().toString().trim();
+                if (!messageTxt.equals("")){
+                    map2.put("name", username);
+                    map2.put("msg", messageTxt);
+
+                    msgRoot.updateChildren(map2);
+                }
 
             }
         });
@@ -189,6 +135,7 @@ public class ChatFragment extends Fragment {
             chatUsername = (String) ((DataSnapshot)i.next()).getValue();
 
             chatTxt.append(chatUsername + ": " + chatMsg + " \n");
+            inputMsgTxt.setText(null);
         }
     }
 
