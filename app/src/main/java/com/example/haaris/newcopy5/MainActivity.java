@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,8 +10,13 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.View;
+import android.widget.Toast;
 
-//import com.example.haaris.newcopy5.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -102,16 +108,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setVisibility(View.VISIBLE);
     }
 
-    public void hideRoomsNav(){
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.GONE);
-    }
-
-    public void showRoomsNav(){
-        BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.findViewById(R.id.navigation_rooms).setVisibility(View.VISIBLE);
-    }
-
     public void hideChatNav(){
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.findViewById(R.id.navigation_chat).setVisibility(View.GONE);
@@ -152,17 +148,18 @@ public class MainActivity extends AppCompatActivity {
 
                     } else if (i == R.id.navigation_stats) {
                         getSupportFragmentManager().beginTransaction().hide(TimerFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
-
+                        getSupportFragmentManager().beginTransaction().detach(StatsFragment).commit();
+                        getSupportFragmentManager().beginTransaction().attach(StatsFragment).commit();
                         selectedFragment = StatsFragment;
 
                     } else if (i == R.id.navigation_more) {
                         getSupportFragmentManager().beginTransaction().hide(TimerFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(StatsFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(MoreFragment).commit();
+                        getSupportFragmentManager().beginTransaction().hide(ChatFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(RoomsFragment).commit();
                         selectedFragment = MoreFragment;
 

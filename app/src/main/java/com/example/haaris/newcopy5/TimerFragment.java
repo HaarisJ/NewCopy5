@@ -17,8 +17,14 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -50,6 +56,9 @@ public class TimerFragment extends Fragment {
     ConstraintLayout mLayout;
     String col;
     TextView ScrambleTextView;
+    DatabaseReference databaseTimes;
+
+
 
     long[] recent5= new long[] {0,0,0,0,0};
     long[] recent12= new long[] {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -63,20 +72,13 @@ public class TimerFragment extends Fragment {
     int solveNum=0;
     long startTime = 0L,timeMs = 0L, timeSwapBuff = 0L, updateTime = 0L;
     String scrambleType = "4x4";
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState== null){
-            System.out.println("got null in oncreate");
 
-        }
-        else{
-            System.out.println("got NOTNULL");
 
-        }
+    public void AddData(String newEntry) {
+        String id = databaseTimes.push().getKey();
+        databaseTimes.child(id).setValue(newEntry);
+
     }
-*/
-
 
     Runnable updateTimerThread = new Runnable(){
         @Override
@@ -206,6 +208,9 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        databaseTimes = FirebaseDatabase.getInstance().getReference("times");
+
+
         if(savedInstanceState != null) {
             Log.i(TAG, "got notnull ");
             String savedResult = savedInstanceState.getString("resultkey");
@@ -304,6 +309,8 @@ public class TimerFragment extends Fragment {
                     customHandler.removeCallbacks(holdTask);
                     customHandler.postDelayed(screenShow, 0);
 
+                    AddData(""+result.getText());
+
                     solveNum++;
                     if (solveNum < 10) {
                         strArr.add(0, "  " + solveNum + ". " + result.getText().toString());
@@ -335,6 +342,8 @@ public class TimerFragment extends Fragment {
         return v;
 
     }
+
+
 
     private class cubeSolver extends AsyncTask<String, String, String>{
 
