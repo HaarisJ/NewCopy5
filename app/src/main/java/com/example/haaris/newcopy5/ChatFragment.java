@@ -1,5 +1,6 @@
 package com.example.haaris.newcopy5;
 
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -64,6 +65,13 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity)getActivity()).publicRoomJoined();
+                //((MainActivity)getActivity()).refreshChat();
+                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof ChatFragment) {
+                    FragmentTransaction fragTransaction = (getActivity()).getSupportFragmentManager().beginTransaction();
+                    fragTransaction.detach(currentFragment);
+                    fragTransaction.attach(currentFragment);
+                    fragTransaction.commit();}
             }
         });
 
@@ -74,48 +82,59 @@ public class ChatFragment extends Fragment {
 
         getUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("currentRoom");
 
-        root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
-
-        sendBtn.setOnClickListener(new View.OnClickListener() {
+        getUserRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Map<String,Object> map = new HashMap<String,Object>();
-                tempKey = root.push().getKey();
-                root.updateChildren(map);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                roomID = dataSnapshot.getValue(String.class);
+                root = FirebaseDatabase.getInstance().getReference().child("chat").child(roomID);
+                sendBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Map<String,Object> map = new HashMap<String,Object>();
+                        tempKey = root.push().getKey();
+                        root.updateChildren(map);
 
-                DatabaseReference msgRoot = root.child(tempKey);
-                Map<String,Object> map2 = new HashMap<String,Object>();
+                        DatabaseReference msgRoot = root.child(tempKey);
+                        Map<String,Object> map2 = new HashMap<String,Object>();
 
-                messageTxt = inputMsgTxt.getText().toString().trim();
-                if (!messageTxt.equals("")){
-                    map2.put("name", username);
-                    map2.put("msg", messageTxt);
+                        messageTxt = inputMsgTxt.getText().toString().trim();
+                        if (!messageTxt.equals("")){
+                            map2.put("name", username);
+                            map2.put("msg", messageTxt);
 
-                    msgRoot.updateChildren(map2);
-                }
+                            msgRoot.updateChildren(map2);
+                        }
 
-            }
-        });
+                    }
+                });
 
-        root.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                appendChatConv(dataSnapshot);
+                root.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        appendChatConv(dataSnapshot);
 
-            }
+                    }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                appendChatConv(dataSnapshot);
-            }
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        appendChatConv(dataSnapshot);
+                    }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-            }
+                    }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
             }
 

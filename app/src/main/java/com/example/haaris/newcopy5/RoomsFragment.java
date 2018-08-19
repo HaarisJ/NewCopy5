@@ -147,6 +147,7 @@ public class RoomsFragment extends Fragment {
                                 mUserRef.child("users").child(currentUser.getUid()).child("currentRoom").setValue(roomID);
                                 mRef.child(roomsList.get(i-1).roomID).child("members").setValue((roomsList.get(i-1).members+1));
                                 ((MainActivity) getActivity()).publicRoomJoined();
+                                ((MainActivity)getActivity()).refreshChat();
                             }
                             if(PUBROOMS.equals("WE GOT ONE") ){
                                 my3x3.setBackgroundColor(Color.GRAY);// set all pubroom buttons to gray
