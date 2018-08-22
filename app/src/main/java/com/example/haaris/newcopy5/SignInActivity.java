@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,13 +49,14 @@ public class SignInActivity extends AppCompatActivity {
 
     private final static int RC_SIGN_IN = 4;
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, usersRef;
     FirebaseAuth.AuthStateListener mAuthListener;
     GoogleSignInClient mGoogleSignInClient;
     SignInButton signInBtn;
     public String username;
-    public boolean usernameExists;
-
+    public boolean usernameExists = false;
+    public boolean flag = false;
+    public ArrayList <String> usernameList = new ArrayList<>();
 
     @Override
     public void onStart() {
@@ -85,13 +87,14 @@ public class SignInActivity extends AppCompatActivity {
 //                    resetUsername();  //ENABLE THIS TO TEST USERNAME DIALOG
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                     if (currentUser.getDisplayName().isEmpty()) {
-                        chooseUsername();
+                        checkExistingUser();
                     }
                     else {
                         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                         intent.putExtra("username", currentUser.getDisplayName());
                         startActivity(intent);
                         Toast.makeText(SignInActivity.this, "Welcome " +  currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 }
             }
@@ -173,23 +176,27 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 username = inputField.getText().toString().trim();
-                checkExistingUser();
+                Log.d("Check User else", "user is" + usernameExists + "\n flag is" + flag);
 
                 if (username.equals("") || username.length() < 3 || username.length() > 14){
                     chooseUsername();
                     Toast.makeText(SignInActivity.this, "Username must be between 3 and 14 characters", Toast.LENGTH_LONG).show();
                 }
-                else if (usernameExists){
+
+                else if (usernameList.contains(username.toLowerCase())){
                     chooseUsername();
                     Toast.makeText(SignInActivity.this, "Sorry, that username is taken!", Toast.LENGTH_LONG).show();
                 }
                 else {
+                    Log.d("userelse", "entered else statement");
                     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(username)
 //                  .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                             .build();
+                    Log.d("userelse", "built");
+
 
                     currentUser.updateProfile(profileUpdates)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -202,10 +209,14 @@ public class SignInActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+                    Log.d("userelse", "updated");
+
 
                     Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                     intent.putExtra("username", username);
                     startActivity(intent);
+                    Log.d("userelse", "intent launched");
+
                 }
 
             }
@@ -244,8 +255,8 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    public void writeNewUser(){
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+    private void writeNewUser(){
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         Map newPost = new HashMap();
@@ -253,53 +264,42 @@ public class SignInActivity extends AppCompatActivity {
         newPost.put("email", currentUser.getEmail());
 
         mDatabase.child("users").child(currentUser.getUid()).setValue(newPost);
-
+        finish();
     }
 
-    public void checkExistingUser(){
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+    private boolean checkExistingUser(){
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    if (username == ds.child("name").getValue()){
-                        usernameExists = true;
-                    }
-                    else{
-                        usernameExists = false;
-                    }
-                }
-            }
+                    Log.d("TAG", "dataSnapshot: " + ds);
+                    Log.d("TAG", "dataSnapshot - getValue:" + ds.child("name").getValue().toString());
+                    Log.d("TAG", "dataSnapshot - username:" + username);
 
+                    usernameList.add(ds.child("name").getValue().toString().toLowerCase());
+
+//                    if (username.equals(ds.child("name").getValue().toString())){
+//                        // restart
+//                        chooseUsername();
+//                        usernameExists = true;
+//
+////                        Toast.makeText(SignInActivity.this, "true: " + ds.child("name").getValue().toString(), Toast.LENGTH_SHORT).show();
+//                        break;
+//                    }
+//                    else{
+//                        usernameExists = false;
+//                    }
+                }
+                chooseUsername();
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+        return usernameExists;
+    }
 
-        }
-
-//        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                for (DataSnapshot ds: dataSnapshot.getChildren()){
-//                    if (username == ds.child("name").getValue()){
-//                        usernameExists = true;
-//                    }
-//                    else{
-//                        usernameExists = false;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
-
-//    }
 }

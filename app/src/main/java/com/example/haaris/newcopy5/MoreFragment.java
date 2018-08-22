@@ -38,13 +38,6 @@ public class MoreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_more, null);
-        Random k = new Random();
-        ClockPuzzle cubeState = new ClockPuzzle();
-        PuzzleStateAndGenerator solver = cubeState.generateRandomMoves(k);
-        String scramble = solver.generator;
-        ScrambleTextView = (TextView) v.findViewById(R.id.scrambleTextView);
-        ScrambleTextView.setVisibility(View.VISIBLE);
-        ScrambleTextView.setText(""+scramble+"");
 
         logoutBtn = v.findViewById(R.id.logoutBtn);
 
